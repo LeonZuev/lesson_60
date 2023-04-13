@@ -1,8 +1,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
-public class Arrays {
+public class Main1Arrays {
 
   public static void main(String[] args) throws IOException {
     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -29,8 +30,5 @@ public class Arrays {
       System.out.println("Число найдено");
       System.out.println("Оно стоит под индексом " + i + ": " + numbers[i]);
     }
-  }
-
-  private static void sort(int[] numbers) {
   }
 }

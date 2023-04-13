@@ -1,9 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
-public class Main {
+public class Arrays {
 
   public static void main(String[] args) throws IOException {
     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -12,7 +11,7 @@ public class Main {
     System.out.print("Введите число для поиска: ");
     int x = Integer.parseInt(bufferedReader.readLine());
 
-    int i = Arrays.binarySearch(numbers, x);
+    int i = java.util.Arrays.binarySearch(numbers, x);
     if (i < 0) {
       System.out.println("Число не найдено");
       // i = -(insertionPoint) - 1

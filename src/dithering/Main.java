@@ -13,9 +13,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.setProperty("sun.java2d.uiScale", "1");
 
-        BufferedImage picture = ImageIO.read(new File("res/3.jpeg"));
+        BufferedImage picture = ImageIO.read(new File("res/1.jpeg"));
 
-        picture = ShowWindow.toBufferedImage(picture.getScaledInstance(3840, 2160, Image.SCALE_SMOOTH));
+        picture = ShowWindow.toBufferedImage(picture.getScaledInstance(1080, 840, Image.SCALE_SMOOTH));
 
         int[] pixels = ((DataBufferInt)picture.getRaster().getDataBuffer()).getData();
 
@@ -51,7 +51,7 @@ public class Main {
         ShowWindow.showImageWindow(picture);
     }
 
-    private static BufferedImage dithering(BufferedImage img) {
+    /*private static BufferedImage dithering(BufferedImage img) {
         BufferedImage bwOnlyImage = new BufferedImage(img.getWidth(), img.getHeight(), TYPE_INT_RGB);
         int[] destPixels = ((DataBufferInt) bwOnlyImage.getRaster().getDataBuffer()).getData();
         int[] sourcePixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
@@ -66,5 +66,51 @@ public class Main {
             destPixels[i] = 0xff000000 | value << 16 | value << 8 | value;
         }
         return bwOnlyImage;
+    }*/
+private static BufferedImage dithering(BufferedImage img) {
+    BufferedImage bwOnlyImage = new BufferedImage(img.getWidth(), img.getHeight(), TYPE_INT_RGB);
+    int[] destPixels = ((DataBufferInt) bwOnlyImage.getRaster().getDataBuffer()).getData();
+    int[] sourcePixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
+
+    int width = img.getWidth();
+    int height = img.getHeight();
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int index = y * width + x;
+            int pixel = 0xff & sourcePixels[index];
+            int value = pixel > 127 ? 255 : 0;
+            destPixels[index] = 0xff000000 | value << 16 | value << 8 | value;
+
+            int error = pixel - value;
+            if (x + 1 < width) {
+                sourcePixels[index + 1] += (error ) / 8;
+            }
+            if (x + 2 < width) {
+                sourcePixels[index + 2] += (error ) / 8;
+            }
+            if (y + 1 < height) {
+                if (x > 0) {
+                    sourcePixels[index + width - 1] += (error ) / 8;
+                }
+                sourcePixels[index + width] += (error ) / 8;
+                if (x + 1 < width) {
+                    sourcePixels[index + width + 1] += (error ) / 8;
+                }
+            }
+            if (y + 2 < height) {
+                sourcePixels[index + width * 2] += (error ) / 8;
+            }
+            // New error diffusion to pixels above and below
+            if (y > 0) {
+                sourcePixels[index - width] += (error ) / 8;
+            }
+            if (y > 1) {
+                sourcePixels[index - width * 2] += (error ) / 8;
+            }
+        }
     }
+
+    return bwOnlyImage;
+}
 }
